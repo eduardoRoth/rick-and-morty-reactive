@@ -1,0 +1,7 @@
+{
+  "name": "reactiveDemo",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
