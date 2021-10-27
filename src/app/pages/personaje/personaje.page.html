@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/personajes"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <ion-row class="ion-justify-content-center">
+    <ion-col size="auto">
+      <div class="ion-padding ion-margin-top">
+        <img [src]="personaje?.image" class="foto" />
+      </div>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-justify-content-center ion-text-center">
+    <ion-col size="auto">
+      <h2 class="ion-no-margin">{{personaje?.name}}</h2>
+      <ion-badge
+        [color]="personaje?.status === 'Alive' ? 'success' : personaje?.status === 'Dead' ? 'danger' : 'medium'"
+        class="ion-text-uppercase"
+      >
+        <strong> {{personaje?.status}} </strong>
+      </ion-badge>
+    </ion-col>
+  </ion-row>
+  <ion-row
+    class="ion-justify-content-center ion-text-center"
+    *ngIf="personaje?.type"
+  >
+    <ion-col size="auto">
+      <ion-chip color="medium"> {{personaje?.type}} </ion-chip>
+    </ion-col>
+  </ion-row>
+
+  <ion-card>
+    <ion-list lines="none">
+      <ion-item>
+        <ion-label>
+          <p>Género</p>
+          <h2>{{personaje?.gender}}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Origen</p>
+          <h2>{{personaje?.origin?.name}}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Especie</p>
+          <h2>{{personaje?.species}}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Ubicación</p>
+          <h2>{{personaje?.location?.name}}</h2>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-row class="ion-text-center ion-justify-content-center">
+    <ion-col size="12">
+      <ion-text color="medium">
+        <small
+          >Creado el {{personaje?.created | date:'dd \'de\' MMMM \' de \' yyyy
+          \' a las \' h:mm a':'':'es-MX'}}
+        </small>
+      </ion-text>
+    </ion-col>
+  </ion-row>
+</ion-content>

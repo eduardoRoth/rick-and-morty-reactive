@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Personajes</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-searchbar
+      placeholder="Busqueda de personajes por nombre"
+      [searchIcon]="'person'"
+      [debounce]="300"
+      (ionChange)="buscarPorNombre($event)"
+      (ionClear)="obtenerPersonajes()"
+    ></ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment>
+      <ion-segment-button value="" class="ion-text-uppercase">
+        Todo
+      </ion-segment-button>
+      <ion-segment-button value="Alive" class="ion-text-uppercase">
+        Vivo
+      </ion-segment-button>
+      <ion-segment-button value="Dead" class="ion-text-uppercase">
+        Muerto
+      </ion-segment-button>
+      <ion-segment-button value="Unknown" class="ion-text-uppercase">
+        ???
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <ion-refresher (ionRefresh)="obtenerPersonajes($event)" slot="fixed">
+    <ion-refresher-content
+      [pullingText]="'Arrastra para actualizar'"
+    ></ion-refresher-content>
+  </ion-refresher>
+  <ion-list>
+    <ion-item
+      *ngFor="let character of characters;let i = index"
+      tappable
+      button
+      lines="none"
+      [color]="i%2 === 0 ? '' : 'light'"
+      [routerLink]="'' + character.id"
+    >
+      <ion-avatar slot="start">
+        <img [src]="character.image" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{character.name}}</h2>
+        <ion-text color="medium">
+          <p>{{character.gender}}</p>
+        </ion-text>
+      </ion-label>
+      <ion-badge
+        slot="end"
+        [color]="character.status === 'Alive' ? 'success' : character.status === 'Dead' ? 'danger' : 'medium'"
+      >
+        <ion-label>{{character.status}}</ion-label>
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="cargarMas($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Cargando más personajes..."
+    >
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
