@@ -2,6 +2,15 @@
 
 Este proyecto es una implementación de una aplicación en Ionic que consume un API público. La finalidad de este proyecto es demostrar las diferencias entre la programación imperativa y la declarativa (en este caso la reactiva).
 
+![img.png](app-preview.png)
+
+## Correr el proyecto
+
+1. `git clone https://github.com/eduardoRoth/rick-and-morty-reactive.git`
+2. `cd rick-and-morty-reactive`
+3. `npm i`
+4. `ionic s` (o `ng serve` o `npm run start`)
+
 ## Acerca de mí
 
 ### Eduardo Roth
