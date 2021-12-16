@@ -2,8 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { RickAndMortyService } from '../../services/rick-and-morty.service';
 import { RickAndMortyCharacter } from '../../models/character.model';
 import {
+  InfiniteScrollCustomEvent,
   IonInfiniteScroll,
   LoadingController,
+  SearchbarCustomEvent,
   ToastController,
 } from '@ionic/angular';
 
@@ -26,74 +28,76 @@ export class PersonajesPage implements OnInit {
     await this.obtenerPersonajes();
   }
 
-  async obtenerPersonajes(event?: any) {
-    this.characters = await this.rickAndMortyService
-      .obtenerPersonajes()
-      .then((response) => response.results)
-      .catch(async (err) => {
-        console.log(err);
-        await (
-          await this.toastCtrl.create({
-            message: err,
-            color: 'danger',
-            duration: 4500,
-          })
-        ).present();
-        return [];
-      });
-    if (event) {
-      event.target.complete();
+  async obtenerPersonajes(event?: InfiniteScrollCustomEvent) {
+    try {
+      this.characters = await this.rickAndMortyService
+        .obtenerPersonajes()
+        .then((response) => response.results);
+    } catch (err) {
+      console.log(err);
+      await (
+        await this.toastCtrl.create({
+          message: err,
+          color: 'danger',
+          duration: 4500,
+        })
+      ).present();
+    } finally {
+      if (event) {
+        await event.target.complete();
+      }
+      this.infiniteScroll.disabled = false;
     }
-    this.infiniteScroll.disabled = false;
   }
 
-  async buscarPorNombre(event: any) {
+  async buscarPorNombre(event: SearchbarCustomEvent) {
     const nameToSearch = event.target.value;
     if (nameToSearch.length === 0) {
       this.infiniteScroll.disabled = true;
       return;
     }
-    await (
-      await this.loadingCtrl.create({
-        message: 'Obteniendo personajes',
-      })
-    ).present();
-    this.characters = await this.rickAndMortyService
-      .obtenerPersonajes(nameToSearch)
-      .then((response) => response.results)
-      .catch(async (err) => {
-        console.log(err);
-        (
-          await this.toastCtrl.create({
-            message: err?.error?.error ?? err,
-            color: 'danger',
-            duration: 4500,
-          })
-        ).present();
-        return [];
-      });
-    this.infiniteScroll.disabled = false;
-    await this.loadingCtrl.dismiss();
+    const obteniendo = await this.loadingCtrl.create({
+      message: 'Obteniendo personajes',
+    });
+    await obteniendo.present();
+    try {
+      this.characters = await this.rickAndMortyService
+        .obtenerPersonajes(nameToSearch)
+        .then((response) => response.results);
+    } catch (err) {
+      console.log(err);
+      (
+        await this.toastCtrl.create({
+          message: err?.error?.error ?? err,
+          color: 'danger',
+          duration: 4500,
+        })
+      ).present();
+    } finally {
+      this.infiniteScroll.disabled = false;
+      await obteniendo.dismiss();
+    }
   }
 
-  async cargarMas(event: any) {
-    const nuevosPersonajes = await this.rickAndMortyService
-      .obtenerPersonajes('', this.paginaActual + 1)
-      .then((response) => response.results)
-      .catch(async (err) => {
-        console.log(err);
-        (
-          await this.toastCtrl.create({
-            message: err?.error?.error ?? err,
-            color: 'danger',
-            duration: 4500,
-          })
-        ).present();
-        this.infiniteScroll.disabled = true;
-        return [];
-      });
-    this.characters.push(...nuevosPersonajes);
-    this.paginaActual++;
-    event.target.complete();
+  async cargarMas(event: InfiniteScrollCustomEvent) {
+    try {
+      const nuevosPersonajes = await this.rickAndMortyService
+        .obtenerPersonajes('', this.paginaActual + 1)
+        .then((response) => response.results);
+      this.characters.push(...nuevosPersonajes);
+      this.paginaActual++;
+    } catch (err) {
+      console.log(err);
+      (
+        await this.toastCtrl.create({
+          message: err?.error?.error ?? err,
+          color: 'danger',
+          duration: 4500,
+        })
+      ).present();
+      this.infiniteScroll.disabled = true;
+    } finally {
+      await event.target.complete();
+    }
   }
 }
